@@ -10,6 +10,9 @@ oct2 = 0
 oct3 = 0
 oct4 = 0
 
+#Used to set screen
+screen = 0
+
 # Setting function to run commands 
 def run_cmd(cmd):
     return subprocess.check_output(cmd, shell=True).decode('utf-8')
@@ -31,9 +34,29 @@ def input3(event):
     global octetselect
     octetselect = 4
 
+# Used to re-edit the IP address
+def updatescreenip(event):
+    global screen
+    if screen == 1:
+        global oct1
+        global oct2
+        global oct3
+        global oct4
+        event.chip.lcd.clear()
+        oct1print = '{0:03}'.format(oct1)
+        oct2print = '{0:03}'.format(oct2)
+        oct3print = '{0:03}'.format(oct3)
+        oct4print = '{0:03}'.format(oct4)
+        stringprint = str(oct1print) + "." + str(oct2print) + "." + str(oct3print) + "." + str(oct4print)
+        event.chip.lcd.write(stringprint)
+        screen = 0
+
+
+
 
 # Functions to add or minus 1 from the octet selected
 def left(event):
+    updatescreenip(event)
     global octetselect
     if octetselect == 1:
         event.chip.lcd.set_cursor(0, 0)
@@ -69,6 +92,7 @@ def left(event):
         event.chip.lcd.write(str(oct4print))
 
 def right(event):
+    updatescreenip(event)
     global octetselect
     if octetselect == 1:
         event.chip.lcd.set_cursor(0, 0)
@@ -106,6 +130,8 @@ def right(event):
     
 # Function to set the IP address on button press 
 def setip(event):
+        global screen 
+        screen = 1
         event.chip.lcd.clear()
         event.chip.lcd.write("IP Address Set")
         global oct1
@@ -124,6 +150,8 @@ def reset(event):
         global oct2
         global oct3
         global oct4
+        global screen
+        screen = 0
         oct1 = 0
         oct2 = 0
         oct3 = 0

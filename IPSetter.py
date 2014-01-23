@@ -39,34 +39,34 @@ def left(event):
         event.chip.lcd.set_cursor(0, 0)
         global oct1
         oct1 = oct1 - 1
-        oct1print = '{0:03}'.format(oct1)
-        event.chip.lcd.write(str(oct1print))
         if oct1 < 1:
             oct1 = 255
+        oct1print = '{0:03}'.format(oct1)
+        event.chip.lcd.write(str(oct1print))
     elif octetselect == 2:
         event.chip.lcd.set_cursor(4, 0)
         global oct2
         oct2 = oct2 - 1
-        oct2print = '{0:03}'.format(oct2)
-        event.chip.lcd.write(str(oct2print))
         if oct2 < 1:
             oct2 = 255
+        oct2print = '{0:03}'.format(oct2)
+        event.chip.lcd.write(str(oct2print))
     elif octetselect == 3:
         event.chip.lcd.set_cursor(8, 0)
         global oct3
         oct3 = oct3 - 1
-        oct3print = '{0:03}'.format(oct3)
-        event.chip.lcd.write(str(oct3print))
         if oct3 < 1:
             oct3 = 255
+        oct3print = '{0:03}'.format(oct3)
+        event.chip.lcd.write(str(oct3print))
     elif octetselect == 4:
         event.chip.lcd.set_cursor(12, 0)
         global oct4
         oct4 = oct4 - 1
-        oct4print = '{0:03}'.format(oct4)
-        event.chip.lcd.write(str(oct4print))
         if oct4 < 1:
             oct4 = 255
+        oct4print = '{0:03}'.format(oct4)
+        event.chip.lcd.write(str(oct4print))
 
 def right(event):
     global octetselect

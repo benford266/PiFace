@@ -41,7 +41,7 @@ def left(event):
         oct1 = oct1 - 1
         oct1print = '{0:03}'.format(oct1)
         event.chip.lcd.write(str(oct1print))
-        if oct1 < 0:
+        if oct1 < 1:
             oct1 = 255
     elif octetselect == 2:
         event.chip.lcd.set_cursor(4, 0)
@@ -49,7 +49,7 @@ def left(event):
         oct2 = oct2 - 1
         oct2print = '{0:03}'.format(oct2)
         event.chip.lcd.write(str(oct2print))
-        if oct2 < 0:
+        if oct2 < 1:
             oct2 = 255
     elif octetselect == 3:
         event.chip.lcd.set_cursor(8, 0)
@@ -57,7 +57,7 @@ def left(event):
         oct3 = oct3 - 1
         oct3print = '{0:03}'.format(oct3)
         event.chip.lcd.write(str(oct3print))
-        if oct3 < 0:
+        if oct3 < 1:
             oct3 = 255
     elif octetselect == 4:
         event.chip.lcd.set_cursor(12, 0)
@@ -65,7 +65,7 @@ def left(event):
         oct4 = oct4 - 1
         oct4print = '{0:03}'.format(oct4)
         event.chip.lcd.write(str(oct4print))
-        if oct4 < 0:
+        if oct4 < 1:
             oct4 = 255
 
 def right(event):

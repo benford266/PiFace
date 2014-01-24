@@ -209,7 +209,7 @@ def chooseprogram(event):
         listenermenu.deactivate()
     elif program == 2:
         event.chip.lcd.clear()
-        cad.lcd.write("000.000.000.000")
+        event.chip.lcd.write("000.000.000.000")
         listenerping.activate()
         listenermenu.deactivate()
 

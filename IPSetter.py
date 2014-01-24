@@ -13,6 +13,9 @@ oct4 = 0
 #Used to set screen
 screen = 0
 
+# Used to choose program
+program = 0
+
 # Setting function to run commands 
 def run_cmd(cmd):
     return subprocess.check_output(cmd, shell=True).decode('utf-8')
@@ -51,8 +54,21 @@ def updatescreenip(event):
         event.chip.lcd.write(stringprint)
         screen = 0
 
-
-
+# USed to set ip address
+def setip(event):
+        global screen 
+        screen = 1
+        event.chip.lcd.clear()
+        event.chip.lcd.write("IP Address Set")
+        global oct1
+        global oct2
+        global oct3
+        global oct4 
+        event.chip.lcd.set_cursor(0, 1)
+        IPAddress = str(oct1) + "." + str(oct2) + "." + str(oct3) + "." + str(oct4)
+        setip = "sudo ifconfig eth0 %s netmask 255.255.255.0 up" % IPAddress
+        run_cmd(setip)
+        event.chip.lcd.write(IPAddress)
 
 # Functions to add or minus 1 from the octet selected
 def left(event):
@@ -128,21 +144,28 @@ def right(event):
         event.chip.lcd.write(str(oct4print))
     
     
-# Function to set the IP address on button press 
-def setip(event):
+# Function to ping the IP address on button press 
+def ping(event):
         global screen 
         screen = 1
-        event.chip.lcd.clear()
-        event.chip.lcd.write("IP Address Set")
         global oct1
         global oct2
         global oct3
-        global oct4 
-        event.chip.lcd.set_cursor(0, 1)
+        global oct4
+        event.chip.lcd.clear()
+        event.chip.lcd.write("Host:")
+        event.chip.lcd.set_cursor(6, 1)
         IPAddress = str(oct1) + "." + str(oct2) + "." + str(oct3) + "." + str(oct4)
-        setip = "sudo ifconfig eth0 %s netmask 255.255.255.0 up" % IPAddress
-        run_cmd(setip)
-        event.chip.lcd.write(IPAddress)
+        event.chip.lcd.clear()
+        event.chip.lcd.write("Ping: %s\nHost:" % IPAddress)
+        event.chip.lcd.set_cursor(6, 1)
+        ping = subprocess.call(['ping', '-c', '1', IPAddress])
+        if ping == 0:
+            event.chip.lcd.write("UP!")
+        elif ping == 2:
+            event.chip.lcd.write("Unreachable")
+        else:
+            event.chip.lcd.write("Down!")
 
 # Function to reset the octets
 def reset(event):
@@ -159,6 +182,39 @@ def reset(event):
         event.chip.lcd.clear()
         event.chip.lcd.write("000.000.000.000")
 
+def ipsetprogram(event):
+    global program
+    event.chip.lcd.clear()
+    event.chip.lcd.write("IP Setter \n Press 4")
+    program = 1
+
+def pingprogram(event):
+    global program
+    event.chip.lcd.clear()
+    event.chip.lcd.write("Pinger \n Press 4")
+    program = 2
+
+def chooseprogram(event):
+    global program
+    global listenermenu
+    global listenerping
+    global listenersetip
+    if program == 0:
+        event.chip.lcd.clear()
+        event.chip.lcd.write("Please select \n program")
+    elif program == 1:
+        event.chip.lcd.clear()
+        event.chip.lcd.write("000.000.000.000")
+        listenersetip.activate()
+        listenermenu.deactivate()
+    elif program == 2:
+        event.chip.lcd.clear()
+        cad.lcd.write("000.000.000.000")
+        listenerping.activate()
+        listenermenu.deactivate()
+
+
+
 
 # Making the piface libarys easier to use
 cad = pifacecad.PiFaceCAD()
@@ -169,16 +225,34 @@ cad.lcd.blink_off()
 cad.lcd.cursor_off()
 
 # Writes details to screen to be used by changing numbers
-cad.lcd.write("000.000.000.000")
-listener = pifacecad.SwitchEventListener(chip=cad)
+cad.lcd.write("Please Select \n program")
 
-# Setting the inputs for use
-listener.register(0, pifacecad.IODIR_FALLING_EDGE, input0)
-listener.register(1, pifacecad.IODIR_FALLING_EDGE, input1)
-listener.register(2, pifacecad.IODIR_FALLING_EDGE, input2)
-listener.register(3, pifacecad.IODIR_FALLING_EDGE, input3)
-listener.register(4, pifacecad.IODIR_FALLING_EDGE, setip)
-listener.register(5, pifacecad.IODIR_FALLING_EDGE, reset)
-listener.register(6, pifacecad.IODIR_FALLING_EDGE, left)
-listener.register(7, pifacecad.IODIR_FALLING_EDGE, right)
-listener.activate()
+#Listeners
+
+listenermenu = pifacecad.SwitchEventListener(chip=cad)
+listenermenu.register(0, pifacecad.IODIR_FALLING_EDGE, ipsetprogram)
+listenermenu.register(1, pifacecad.IODIR_FALLING_EDGE, pingprogram)
+listenermenu.register(4, pifacecad.IODIR_FALLING_EDGE, chooseprogram)
+listenermenu.activate()
+
+
+listenerping = pifacecad.SwitchEventListener(chip=cad)
+listenerping.register(0, pifacecad.IODIR_FALLING_EDGE, input0)
+listenerping.register(1, pifacecad.IODIR_FALLING_EDGE, input1)
+listenerping.register(2, pifacecad.IODIR_FALLING_EDGE, input2)
+listenerping.register(3, pifacecad.IODIR_FALLING_EDGE, input3)
+listenerping.register(4, pifacecad.IODIR_FALLING_EDGE, ping)
+listenerping.register(5, pifacecad.IODIR_FALLING_EDGE, reset)
+listenerping.register(6, pifacecad.IODIR_FALLING_EDGE, left)
+listenerping.register(7, pifacecad.IODIR_FALLING_EDGE, right)
+
+
+listenersetip = pifacecad.SwitchEventListener(chip=cad)
+listenersetip.register(0, pifacecad.IODIR_FALLING_EDGE, input0)
+listenersetip.register(1, pifacecad.IODIR_FALLING_EDGE, input1)
+listenersetip.register(2, pifacecad.IODIR_FALLING_EDGE, input2)
+listenersetip.register(3, pifacecad.IODIR_FALLING_EDGE, input3)
+listenersetip.register(4, pifacecad.IODIR_FALLING_EDGE, setip)
+listenersetip.register(5, pifacecad.IODIR_FALLING_EDGE, reset)
+listenersetip.register(6, pifacecad.IODIR_FALLING_EDGE, left)
+listenersetip.register(7, pifacecad.IODIR_FALLING_EDGE, right)

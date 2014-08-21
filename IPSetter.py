@@ -4,6 +4,8 @@ import subprocess
 # Used by the scripts to select the octet for changes
 octetselect = 1
 
+#another comment
+
 #Different octet selection
 oct1 = 0
 oct2 = 0
